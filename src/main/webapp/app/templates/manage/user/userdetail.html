@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+ <base href="${basePath}"> 
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>一健通</title>
+<link rel="stylesheet" href="app/templates/manage/js/layui-v2.4.5/layui/css/layui.css" media="all" />
+<!-- <link rel="stylesheet" href="http://localhost:8081/springtest/app/templates/manage/css/font-awesome/css/font-awesome.min.css" media="all" />
+<link rel="stylesheet" href="http://localhost:8081/springtest/app/templates/manage/css/app.css" media="all" />
+<link rel="stylesheet" href="http://localhost:8081/springtest/app/templates/manage/iconfont/iconfont.css" media="all" /> -->
+<script src="app/templates/manage/js/layui-v2.4.5/layui/layui.js"></script>
+<script src="app/templates/manage/js/jquery/jquery.min.js"></script>
+</head>
+<title>adduser</title>
+</head>
+<style>
+.layui-input-block,.layui-input{
+width: 300px;
+
+}
+</style>
+
+
+<body >
+<form class="layui-form" action="" >
+  <div class="layui-form-item">
+    <label class="layui-form-label">用户名</label>
+    <div class="layui-input-block">
+      <input type="text" name="userName"   id="userName" autocomplete="off" lay-verify="required" placeholder="请输入用户名"  class="layui-input" readonly="readonly">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">密码框</label>
+    <div class="layui-input-inline">
+      <input type="text" name="passWord" id="passWord" autocomplete="off" lay-verify="required" placeholder="请输入密码"  class="layui-input" readonly="readonly">
+    </div>
+   
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">角色</label>
+    <div class="layui-input-inline">
+      <input  id="roleId" name="roleId"  autocomplete="off" lay-verify="required" placeholder="请输入密码"  class="layui-input" readonly="readonly">
+    </div>
+  </div>
+</form>
+<script>
+
+function child(res, index) {
+	$('#userName').val(res.userName);
+	$('#passWord').val(res.passWord);
+	$('#roleId').val(res.roleName);
+}
+//Demo
+layui.use(['form','layer'], function(){
+  var form = layui.form;
+  var layer = layui.layer;
+   var $=layui.$;
+});
+</script>
+
+</body>
+</html>

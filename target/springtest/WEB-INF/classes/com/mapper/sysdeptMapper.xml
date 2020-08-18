@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tt.ui.repository.SysDeptRepository">
+<!--resultMap 里的关联的表中不能出现相同的字段，如有相同字段使用别名处理  -->
+<resultMap type="com.tt.ui.pojo.SysDept" id="selectYgMap">
+ <id property="id" column="did"/> 
+<result property="deptName" column="dept_name"/>
+<collection property="yg" ofType="com.tt.ui.pojo.SysYg" javaType="List" >
+<id property="id" column="yid"/>
+<result property="ygName" column="yg_name"/>
+<result property="deptId" column="dept_id"/>
+</collection>
+</resultMap>
+<select id="selectDept" parameterType="long" resultMap="selectYgMap">
+select d.id did ,d.dept_name,y.id yid,y.yg_name,y.dept_id from sys_dept d,sys_yg y where d.id=y.dept_id and d.id=#{id}
+</select>
+
+
+</mapper>

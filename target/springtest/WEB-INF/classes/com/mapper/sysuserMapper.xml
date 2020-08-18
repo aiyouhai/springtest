@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tt.ui.repository.SysUserRepository">
+
+ <cache type="com.tt.rediscache.RedisCache" /> 
+
+<!--查询菜单列表  -->
+<select id="selectRoleByUserId" parameterType="long" resultType="SysRole">
+select r.id,r.role_name,r.enabled, r.create_by, r.create_time  
+from sys_user u inner join sys_user_role ur on u.id=ur.user_id 
+inner join sys_role r on ur.role_id=r.id where u.id=#{id}
+</select>
+<!--支持逐渐自增的数据库使用  useGeneratedKeys="true" keyProperty="id"可以返回是主键id
+另外一种方式使用<selectKey>标签这种方式支持任何数据库
+<insert id="addUser"  parameterType="SysUser" > 
+insert into sys_user( user_name , user_password, user_email , user_info , head_img, create_time) 
+values (#{userName} , #{userPassword} , #{userEmail},#{userInfo} , #{headimg, jdbcType=BLOB }, 
+#{createTime, jdbcType= TIMESTAMP})
+<selectKey keyProperty="id" resultType="long" order="after" >
+SELECT LAST INSERT ID ()
+</selectKey>
+</insert>
+-->
+<insert id="addUser"  parameterType="SysUser" useGeneratedKeys="true" keyProperty="id"> 
+insert into sys_user( 
+ user_name , user_password, user_email , 
+user_info , head_img, create_time) 
+values ( 
+ #{userName} , #{userPassword} , #{userEmail},
+#{userInfo} , #{headimg, jdbcType=BLOB }, 
+#{createTime, jdbcType= TIMESTAMP})
+</insert>
+
+<!-- <update id="updateSysUser" parameterType="SysUser" >
+update sys_user set user_name=#{userName},user_password=#{userPassword},user_email=#{userEmail},
+user_info=#{userInfo}, head_img=#{headimg, jdbcType=BLOB },create_time=#{createTime, jdbcType= TIMESTAMP} where id=#{id}
+
+</update> -->
+
+<!--test xxx !=null 适用于所有类型 xxx !='' 适用于字符串   and和or 是与和或的连接关键字   -->
+<!-- 使用set 和if结合之跟新有变化的字段，使用set可以将不符合条件的字段后边的，去掉保证sql正确
+加上id=#{id}是防止所有字段都为null的情况sql不完整出错
+ -->
+<update id="updateSysUser" parameterType="SysUser" >
+update sys_user
+<set>
+<if test="userName !=null and userName !='' ">user_name=#{userName}, </if>
+<if test="userPassword !=null and userPassword !=''">user_password=#{userPassword},</if>
+<if test="userEmail !=null and userEmail !='' ">user_info=#{userInfo},</if>
+<if test="userEmail !=null and userEmail !=''">user_email=#{userEmail},</if>
+<if test="headimg !=null ">head_img=#{headimg, jdbcType=BLOB },</if>
+<if test="createTime !=null ">create_time=#{createTime, jdbcType= TIMESTAMP}</if>
+</set>
+id=#{id}
+where id=#{id}
+</update>
+<!--使用where和if标签实现条件查询，where标签可以将不符合条件的字段前面的and或者or关键字去掉 -->
+<select id="selectByUserNameOrPassword" resultType="int">
+select count(*) from sys_user 
+<where>
+<if test="userName !=null and userName !=''"> and user_name=#{userName}</if>
+<if test="userPassword !=null and userPassword != ''">or user_password=#{userPassword}</if>
+</where>
+
+</select>
+
+<select id="selectByUserNameOrPassword2" resultType="int">
+select count(*) from sys_user 
+<where>
+<!--choose when 是按顺序进行条件判断，如果第一个成立将不再往下进行，如果都不成立，执行otherwise  -->
+<choose>
+<when test="userName !=null and userName !=''">and user_name=#{userName}</when>
+<when test="userPassword !=null and userPassword != ''">and user_password=#{userPassword}</when>
+<otherwise>
+ and user_email=#{userEmail}
+</otherwise>
+</choose>
+</where>
+</select>
+
+
+<select id="selectOneById" parameterType="long" resultType="SysUser" useCache="true">
+select * from sys_user u  where u.id=#{id}
+ </select>
+ <!-- 删除操作是 表名以及字段名不能使用别名 -->
+ <delete id="deleUser">
+ delete from sys_user  where id=#{id} 
+ </delete>
+ 
+ 
+<resultMap type="SysUser" id="userRolePrivilegeMap">
+<id property="id" column="uid"/> 
+<result property="userName" column="user_name"/>
+<result property="userPassword" column="user_password"/>
+<result property="userEmail" column="user_email"/>
+<result property="userInfo" column="user_info"/>
+<result property="headimg" column="head_ing"/>
+<result property="createTime" column="utime"/>
+<collection property="sysRoleList" ofType="SysRole">
+<id property="id" column="rid"/> 
+<result property="roleName" column="role_name"/>
+<result property="enabled" column="enabled"/>
+<result property="createBy" column="create_by"/>
+<result property="createTime" column="rtime"/>
+<collection property="sysPrivilegeList" ofType="SysPrivilege">
+<id property="id" column="pid"/> 
+<result property="privilegeName"  column="privilege_name"/>
+<result property="privilegeUrl"  column="privilege_url"/>
+</collection>
+</collection>
+</resultMap> 
+ <select id="selectUserRolePrivilege" parameterType="long" resultMap="userRolePrivilegeMap">
+ SELECT  u.id uid,u.user_name,u.user_password,u.user_email,u.user_info,u.head_img,u.create_time utime,
+ r.id rid,r.role_name,r.enabled,r.create_by,r.create_time rtime,
+ p.id pid ,p.privilege_name,p.privilege_url
+ FROM sys_user u INNER JOIN sys_user_role ur ON u.id=ur.user_id
+
+INNER JOIN sys_role r ON r.id=ur.role_id 
+
+INNER JOIN sys_role_privilege rp ON rp.role_id=r.id
+
+INNER JOIN sys_privilege p ON p.id=rp.privilege_id
+
+WHERE u.id=#{id}
+ </select>
+ 
+<select id="selectPageHelper" resultType="SysUser">
+select * from sys_user limit #{pageNum},#{pageSize}
+</select> 
+ <select id="selectcount" resultType="int">
+select count(*) from sys_user 
+</select> 
+
+<resultMap id="userMap" type="SysUser">
+        <id property="id" column="uid"/> 
+<result property="userName" column="user_name"/>
+<result property="userPassword" column="user_password"/>
+<result property="userEmail" column="user_email"/>
+<result property="userInfo" column="user_info"/>
+<result property="headimg" column="head_ing"/>
+<result property="createTime" column="utime"/>
+<collection property="sysRoleList" ofType="SysRole">
+<id property="id" column="rid"/> 
+<result property="roleName" column="role_name"/>
+<result property="enabled" column="enabled"/>
+<result property="createBy" column="create_by"/>
+<result property="createTime" column="rtime"/>
+ </collection>
+    </resultMap>
+    <select id="findByUserName" parameterType="String" resultMap="userMap">
+       SELECT  u.id uid,u.user_name,u.user_password,u.user_email,u.user_info,u.head_img,u.create_time utime,
+       r.id rid,r.role_name,r.enabled,r.create_by,r.create_time rtime 
+       from sys_user u inner join sys_user_role ur on u.id=ur.user_id 
+       inner join sys_role r on ur.role_id=r.id  where u.user_name= #{username}
+    </select>
+
+</mapper>

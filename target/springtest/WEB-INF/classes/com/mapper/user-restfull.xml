@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tt.RESTful.User_RestfulRepository">
+<select id="getUserRe" resultType="com.tt.RESTful.User_Restful">
+select u.id,u.name,u.age from user u;
+</select>
+
+<select id="getUserReOne" resultType="com.tt.RESTful.User_Restful" parameterType="int">
+select u.id,u.name,u.age from user u where u.id=#{id};
+</select>
+<select id="getUserReAndAddre" parameterType="int" resultType="com.tt.RESTful.User_Restful">
+select u.id ,u.name,u.age,a.id "address.id" ,a.address "address.address",a.pheng "address.pheng",a.user_id "address.userId" from user u left join address a on u.id=a.user_id where u.id=#{id}
+</select>
+
+
+</mapper>

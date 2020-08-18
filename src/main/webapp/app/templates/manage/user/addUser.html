@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+ <base href="${basePath}"> 
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>一健通</title>
+<link rel="stylesheet" href="app/templates/manage/js/layui-v2.4.5/layui/css/layui.css" media="all" />
+<!-- <link rel="stylesheet" href="http://localhost:8081/springtest/app/templates/manage/css/font-awesome/css/font-awesome.min.css" media="all" />
+<link rel="stylesheet" href="http://localhost:8081/springtest/app/templates/manage/css/app.css" media="all" />
+<link rel="stylesheet" href="http://localhost:8081/springtest/app/templates/manage/iconfont/iconfont.css" media="all" /> -->
+<script src="app/templates/manage/js/layui-v2.4.5/layui/layui.js"></script>
+<script src="app/templates/manage/js/jquery/jquery.min.js"></script>
+</head>
+<title>adduser</title>
+</head>
+<style>
+.layui-input-block,.layui-input{
+width: 300px;
+
+}
+</style>
+
+
+<body >
+<form class="layui-form" action="" >
+  <div class="layui-form-item">
+    <label class="layui-form-label">用户名</label>
+    <div class="layui-input-block">
+      <input type="text" name="userName"   autocomplete="off" lay-verify="required" placeholder="请输入用户名"  class="layui-input">
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">密码框</label>
+    <div class="layui-input-inline">
+      <input type="password" name="passWord"  autocomplete="off" lay-verify="required" placeholder="请输入密码"  class="layui-input">
+    </div>
+   
+  </div>
+  <div class="layui-form-item">
+    <label class="layui-form-label">角色</label>
+    <div class="layui-input-block">
+      <select id="selectId" name="roleId" lay-verify="required">
+       
+      </select>
+    </div>
+  </div>
+  <div class="layui-form-item">
+    <div class="layui-input-block">
+      <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+    </div>
+  </div>
+</form>
+ 
+<script>
+//Demo
+layui.use(['form','layer'], function(){
+  var form = layui.form;
+  var layer = layui.layer;
+  //动态下拉框
+  $.ajax({
+	    url:'${basePath}role/selectRole',
+	    //dataType:'json',
+	    type:'post',
+	    success:function(data){
+	    	console.log(data)
+	        $.each(data.data,function(index,item){
+	        	console.log(item);
+	        	//option  第一个参数是页面显示的值，第二个参数是传递到后台的值
+	        	$('#selectId').append(new Option(item.roleName,item.id));//往下拉菜单里添加元素
+	        	//设置value（）为2的值为默认选中
+	        	//$('#selectId').val(2);
+	        })
+	 
+	        form.render(); //更新全部表单内容
+			//form.render('select'); //刷新表单select选择框渲染
+	    }
+	   });
+	
+  //监听提交
+  form.on('submit(formDemo)', function(data){
+	  var user=data.field;
+    $.ajax({ 
+		type: "post",
+		url: "${basePath}user/add",
+		async: false,
+		data: user,
+		success: function(data) {
+			if(data.status=202){
+				layer.msg('添加用户成功', {
+					  icon: 1,
+					  time: 2000 //2秒关闭（如果不配置，默认是3秒）
+					}, function(){
+						var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+						parent.layer.close(index); //再执行关闭   
+					});   
+			}else {
+				layer.msg('添加用户失败', {
+					  icon: 1,
+					  time: 2000 //2秒关闭（如果不配置，默认是3秒）
+					});   
+			}
+		}
+	});
+    return false;
+  });
+});
+</script>
+
+</body>
+</html>

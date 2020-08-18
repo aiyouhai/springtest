@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tt.ui.repository.SysPrivilegeRepository">
+<resultMap type="SysPrivilege" id="privilege">
+ <id property="id" column="pid"/> 
+<result property="privilegeName" column="privilege_name"/>
+<result property="privilegeUrl" column="privilege_url"/>
+<collection property="sysRoleList" ofType="SysRole">
+<id property="id" column="rid"/> 
+<result property="roleName" column="role_name"/>
+<result property="enabled" column="enabled"/>
+<result property="createBy" column="create_by"/>
+<result property="createTime" column="rtime"/>
+</collection>
+</resultMap>
+<select id="findAllSysPrivilege" resultMap="privilege">
+ SELECT r.role_name,p.privilege_url FROM sys_role r INNER JOIN sys_role_privilege rp ON r.id=rp.role_id 
+       INNER JOIN sys_privilege p ON p.id=rp.privilege_id  
+</select>
+
+</mapper>

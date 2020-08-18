@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tt.mybatis.Mybatis">
+<insert id="addMybatis" >
+insert into mybatis values(#{name},#{num})
+</insert>
+
+<delete id="deleteMybatis">
+delete from mybatis where name=#{name};
+</delete>
+<select id="findMybatis">
+select * from mybatis where name=#{name}
+</select>
+
+<update id="updateMybatis">
+update mybatis set name=#{name},num=#{num} where name=#{name}
+</update>
+</mapper>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <base href="${basePath}">
+<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="multipart/form-data; charset=utf-8" />
+<title>Insert title here</title>
+</head>
+<body>
+	<form action=""  id="tf" method="POST" enctype="multipart/form-data">
+				<table>
+					<tr>
+						<td>论文题目：</td>
+						<td><input type="text" id="ti" name="tM"></td>
+						<td id="te" style="color: red"></td>
+					</tr>
+					<tr>
+						<td>类型：</td>
+						<td><input type="text" id="paperSummary" name="lX"></td>
+						<td id="te1" style="color: red"></td>
+					</tr>
+					<tr>
+						<td>论文摘要：</td>
+						<td><input type="text" id="zY" name="zY"></td>
+						<td id="te1" style="color: red"></td>
+					</tr>
+					<tr>
+						<td>论文内容：</td>
+						<td><input type="file" id="paperPath" name="filename"/></td>
+						<td id="te2" style="color: red">上传大小不能超过5M*上传文件类型必须为：doc docx</td>
+					</tr>
+					<tr>
+						<td>图片：</td>
+						<td><input type="file" id="pic" name="pic"/></td>
+						
+					</tr>
+					
+					<tr>
+						<td><input id="info" type="button" value="保存"> </td>
+						<td><input type="button" id="fh" value="返回"/></td>
+					</tr>
+				</table>
+			</form>
+</body>
+<script src="app/templates/manage/js/jquery-1.12.4.min.js" ></script>
+ 
+<!-- 引入非对称RSA加密工具 -->
+<script src="app/templates/manage/js/jsencrypt.min.js" "></script>
+<script type="text/javascript">
+
+$("#info").click(function() {
+	alert("sdsdsd")
+	
+	//var point = paperPath.lastIndexOf(".");  
+	//var type = paperPath.substr(point);//获取后缀
+	//var fileSzie=$("#paperPath")[0].files[0].size;//获取文件大小,得到的值为字节类型
+	tt();
+	
+})
+
+function tt(){
+	
+	console.log("tt方法")
+	var form = new FormData(document.getElementById("tf"));
+    //form.append("tM",$("#ti").val());
+    //form.append("lX",$("#paperSummary").val());
+   // form.append("zY",$("#zY").val());
+    //form.append("filename",$("#paperPath").val());
+	
+	$.ajax({
+		url:"${basePath}hello/addfile",
+        //这是一个对象，表示请求的参数，两个参数：method=ajax&val=xxx，服务器可以通过request.getParameter()来获取 
+        //data:{method:"ajaxTest",val:value},  
+        type:"post",
+        data:form,
+         processData:false,
+         contentType:false,
+        
+        success: function(result){  //这个方法会在服务器执行成功是被调用 ，参数result就是服务器返回的值(现在是json类型) 
+            if(result){
+               console.log(result)
+            }else{
+            	alert("false");
+            }
+        }
+      });
+}
+
+</script>
+
+</html>
+
+
